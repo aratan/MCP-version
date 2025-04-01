@@ -22,5 +22,29 @@
             },
             "required": ["a", "b"]
         }
+    },
+    {
+        "name": "MCP_MULTIPLICACION",
+        "description": "Multiply two numbers together",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "a": { "type": "integer", "description": "The first number" },
+                "b": { "type": "integer", "description": "The second number" }
+            },
+            "required": ["a", "b"]
+        }
+    },
+    {
+        "name": "MCP_DIVISION",
+        "description": "Divide two numbers together",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "a": { "type": "integer", "description": "The first number" },
+                "b": { "type": "integer", "description": "The second number" }
+            },
+            "required": ["a", "b"]
+        }
     }
 ]

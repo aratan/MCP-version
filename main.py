@@ -10,6 +10,17 @@ def MCP_RESTA(a: int, b: int) -> int:
     """Resta dos números."""
     return a - b
 
+# Agregadas nuevas funciones
+def MCP_MULTIPLICACION(a: int, b: int) -> int:
+    """Multiplica dos números."""
+    return a * b
+
+def MCP_DIVISION(a: int, b: int) -> int:
+    """Divide dos números (división entera)."""
+    if b == 0:
+        raise ValueError("División por cero")
+    return a // b
+
 # --- Configuración de argumentos ---
 parser = argparse.ArgumentParser(description="Ejecuta un modelo Ollama con funciones personalizadas.")
 parser.add_argument("-m", "--model", default="llama3.2:3b", help="Modelo de Ollama (ej. 'llama3.2:7b')")
@@ -25,6 +36,11 @@ if args.functions:
         available_functions["MCP_SUMA"] = MCP_SUMA
     if "MCP_RESTA" in args.functions.split(","):
         available_functions["MCP_RESTA"] = MCP_RESTA
+    # Agregadas nuevas funciones a available_functions
+    if "MCP_MULTIPLICACION" in args.functions.split(","):
+        available_functions["MCP_MULTIPLICACION"] = MCP_MULTIPLICACION
+    if "MCP_DIVISION" in args.functions.split(","):
+        available_functions["MCP_DIVISION"] = MCP_DIVISION
 
 # --- Cargar herramientas ---
 try:
@@ -36,11 +52,22 @@ except (FileNotFoundError, json.JSONDecodeError) as e:
 
 # Configuración dinámica dependiendo del tipo de 'tools'
 if isinstance(tools, dict):
-    ALIAS_MAP = tools.get("aliases", {"MCP_SUMA": ["add"], "MCP_RESTA": ["subtract", "sub"]})
-    PARAM_MAP = tools.get("param_maps", {"MCP_RESTA": {"x": "a", "y": "b"}})
+    ALIAS_MAP = tools.get("aliases", {
+        "MCP_SUMA": ["add"],
+        "MCP_RESTA": ["subtract", "sub"],
+        "MCP_MULTIPLICACION": ["multiply", "multiplication"],
+        "MCP_DIVISION": ["divide", "division", "math.floor"]  # added alias matching "math.floor"
+    })
+    PARAM_MAP = tools.get("param_maps", {"MCP_RESTA": {"x": "a", "y": "b"}, "MCP_MULTIPLICACION": {"x": "a", "y": "b"}})
 else:
-    ALIAS_MAP = {"MCP_SUMA": ["add"], "MCP_RESTA": ["subtract", "sub"]}
-    PARAM_MAP = {"MCP_RESTA": {"x": "a", "y": "b"}}
+    # Actualizado ALIAS_MAP para incluir nuevos alias
+    ALIAS_MAP = {
+        "MCP_SUMA": ["add"],
+        "MCP_RESTA": ["subtract", "sub"],
+        "MCP_MULTIPLICACION": ["multiply", "multiplication"],
+        "MCP_DIVISION": ["divide", "division"]
+    }
+    PARAM_MAP = {"MCP_RESTA": {"x": "a", "y": "b"}, "MCP_MULTIPLICACION": {"x": "a", "y": "b"}}
 
 # --- Conversación ---
 messages = [{"role": "user", "content": args.prompt}]
@@ -107,6 +134,6 @@ try:
             else:
                 print(f"Función {function_name} no habilitada (use -l para activar)")
     else:
-        print(f"\nRESPUESTA DIRECTA:\n{response['message']['content']}\n")
+        print(f"\nRESPUESTA DIRECTa:\n{response['message']['content']}\n")
 except Exception as e:
     print(f"ERROR: {e}")

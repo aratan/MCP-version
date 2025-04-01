@@ -73,7 +73,7 @@ def main():
                 else:
                     print(f"Función {function_name} no habilitada o no encontrada (use -l para activar)")
         else:
-            print(f"\nRESPUESTA DIRECTa:\n{response['message']['content']}\n")
+            print(f"\nRESPUESTA DIRECTA:\n{response['message']['content']}\n")
 
     except Exception as e:
         print(f"ERROR: {e}")

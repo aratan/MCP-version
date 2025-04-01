@@ -15,7 +15,15 @@
   {
     "name": "MCP_RESTA",
     "description": "Subtract two numbers",
-    "aliases": ["subtract", "sub", "minus", "resta", "Math.subtract", "Math Subtract", "Math.sub"],
+    "aliases": [
+      "subtract",
+      "sub",
+      "minus",
+      "resta",
+      "Math.subtract",
+      "Math Subtract",
+      "Math.sub"
+    ],
     "parameters": {
       "type": "object",
       "properties": {
@@ -29,7 +37,14 @@
   {
     "name": "MCP_MULTIPLICACION",
     "description": "Multiply two numbers",
-    "aliases": ["multiply", "multiplication", "mul", "Math.multiply", "Math Multiply", "Math.mul"],
+    "aliases": [
+      "multiply",
+      "multiplication",
+      "mul",
+      "Math.multiply",
+      "Math Multiply",
+      "Math.mul"
+    ],
     "parameters": {
       "type": "object",
       "properties": {
@@ -43,7 +58,14 @@
   {
     "name": "MCP_DIVISION",
     "description": "Divide two numbers (integer division)",
-    "aliases": ["divide", "division", "div", "Math.divide", "Math Divide", "Math.div"],
+    "aliases": [
+      "divide",
+      "division",
+      "div",
+      "Math.divide",
+      "Math Divide",
+      "Math.div"
+    ],
     "parameters": {
       "type": "object",
       "properties": {
@@ -57,7 +79,15 @@
   {
     "name": "READ_FILE",
     "description": "Reads the content of a file",
-    "aliases": ["fs.readFileSync", "readFile", "read_file", "fs", "readfile", "read", "filesystem.read"],
+    "aliases": [
+      "fs.readFileSync",
+      "readFile",
+      "read_file",
+      "fs",
+      "readfile",
+      "read",
+      "filesystem.read"
+    ],
     "parameters": {
       "type": "object",
       "properties": {

@@ -32,6 +32,14 @@ except (FileNotFoundError, json.JSONDecodeError) as e:
     print(f"Error cargando herramientas: {e}")
     exit(1)
 
+# Configuración dinámica dependiendo del tipo de 'tools'
+if isinstance(tools, dict):
+    ALIAS_MAP = tools.get("aliases", {"MCP_SUMA": ["add"], "MCP_RESTA": ["subtract", "sub"]})
+    PARAM_MAP = tools.get("param_maps", {"MCP_RESTA": {"x": "a", "y": "b"}})
+else:
+    ALIAS_MAP = {"MCP_SUMA": ["add"], "MCP_RESTA": ["subtract", "sub"]}
+    PARAM_MAP = {"MCP_RESTA": {"x": "a", "y": "b"}}
+
 # --- Conversación ---
 messages = [{"role": "user", "content": args.prompt}]
 
@@ -48,23 +56,22 @@ try:
     if "tool_calls" in response["message"]:
         for tool_call in response["message"]["tool_calls"]:
             function_name = tool_call["function"]["name"]
-            # Manejar alias de función de forma insensible a mayúsculas
-            if function_name.lower() == "add":
-                function_name = "MCP_SUMA"
-            elif function_name.lower() in ["subtract", "sub"]:
-                function_name = "MCP_RESTA"
+            # Resolver alias dinámicamente
+            for canonical, aliases in ALIAS_MAP.items():
+                if function_name.lower() in [alias.lower() for alias in aliases]:
+                    function_name = canonical
+                    break
             if function_name in available_functions:
                 try:
                     # Manejar argumentos (ya sea dict o str)
                     args_dict = tool_call["function"]["arguments"]
                     if isinstance(args_dict, str):
                         args_dict = json.loads(args_dict)
-                    # Mapear claves para MCP_RESTA: x->a y y->b
-                    if function_name == "MCP_RESTA":
-                        if "x" in args_dict:
-                            args_dict["a"] = args_dict.pop("x")
-                        if "y" in args_dict:
-                            args_dict["b"] = args_dict.pop("y")
+                    # Aplicar mapeo dinámico de parámetros si existe
+                    param_mapping = PARAM_MAP.get(function_name, {})
+                    for old_key, new_key in param_mapping.items():
+                        if old_key in args_dict:
+                            args_dict[new_key] = args_dict.pop(old_key)
                     # Convertir valores a enteros
                     args_dict = {k: int(v) for k, v in args_dict.items()}
                     

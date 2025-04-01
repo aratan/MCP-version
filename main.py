@@ -13,16 +13,18 @@ def MCP_RESTA(a: int, b: int) -> int:
 # --- Configuración de argumentos ---
 parser = argparse.ArgumentParser(description="Ejecuta un modelo Ollama con funciones personalizadas.")
 parser.add_argument("-m", "--model", default="llama3.2:3b", help="Modelo de Ollama (ej. 'llama3.2:7b')")
-parser.add_argument("-l", "--functions", default="MCP_SUMA,MCP_RESTA", help="Funciones habilitadas (ej. 'MCP_SUMA,MCP_RESTA')")
+# Se cambia el valor por defecto de -l a vacío
+parser.add_argument("-l", "--functions", default="", help="Funciones habilitadas (ej. 'MCP_SUMA,MCP_RESTA')")
 parser.add_argument("-p", "--prompt", default="¿Cuánto es 10 + 10?", help="Prompt del usuario")
 args = parser.parse_args()
 
-# --- Habilitar funciones ---
+# Habilitar funciones solo si se especifica -l
 available_functions = {}
-if "MCP_SUMA" in args.functions.split(","):
-    available_functions["MCP_SUMA"] = MCP_SUMA
-if "MCP_RESTA" in args.functions.split(","):
-    available_functions["MCP_RESTA"] = MCP_RESTA
+if args.functions:
+    if "MCP_SUMA" in args.functions.split(","):
+        available_functions["MCP_SUMA"] = MCP_SUMA
+    if "MCP_RESTA" in args.functions.split(","):
+        available_functions["MCP_RESTA"] = MCP_RESTA
 
 # --- Cargar herramientas ---
 try:
@@ -44,16 +46,22 @@ else:
 messages = [{"role": "user", "content": args.prompt}]
 
 try:
-    # Primera llamada al modelo
-    response = ollama.chat(
-        model=args.model,
-        messages=messages,
-        tools=tools,
-    )
+    # Primera llamada al modelo: se pasa 'tools' solo si se activan funciones
+    if args.functions:
+        response = ollama.chat(
+            model=args.model,
+            messages=messages,
+            tools=tools,
+        )
+    else:
+        response = ollama.chat(
+            model=args.model,
+            messages=messages,
+        )
     messages.append(response["message"])
-
-    # Procesar llamadas a funciones
-    if "tool_calls" in response["message"]:
+    
+    # Procesamiento de funciones solo si se activan con -l
+    if args.functions and "tool_calls" in response["message"]:
         for tool_call in response["message"]["tool_calls"]:
             function_name = tool_call["function"]["name"]
             # Resolver alias dinámicamente
@@ -99,7 +107,6 @@ try:
             else:
                 print(f"Función {function_name} no habilitada (use -l para activar)")
     else:
-        print(f"\nRESPUESTA DIRECTa:\n{response['message']['content']}\n")
-
+        print(f"\nRESPUESTA DIRECTA:\n{response['message']['content']}\n")
 except Exception as e:
     print(f"ERROR: {e}")

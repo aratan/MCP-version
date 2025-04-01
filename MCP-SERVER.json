@@ -1,0 +1,26 @@
+[
+    {
+        "name": "MCP_SUMA",
+        "description": "Add two numbers together",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "a": { "type": "integer", "description": "The first number" },
+                "b": { "type": "integer", "description": "The second number" }
+            },
+            "required": ["a", "b"]
+        }
+    },
+    {
+        "name": "MCP_RESTA",
+        "description": "Sub two numbers together",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "a": { "type": "integer", "description": "The first number" },
+                "b": { "type": "integer", "description": "The second number" }
+            },
+            "required": ["a", "b"]
+        }
+    }
+]
